@@ -23,6 +23,7 @@ public class parsing {
     }
     private String fileName;
 
+
     public parsing(String fileName) {
         this.fileName = fileName;
     }
@@ -49,31 +50,24 @@ public class parsing {
             if (cell.getStringCellValue().equals(columName)) {
                 cell = row.getCell(1);
                 switch (cell.getCellType()) {
-                    case FORMULA:
-                        value = cell.getCellFormula();
-                        break;
-                    case NUMERIC:
-                        value = cell.getNumericCellValue() + "";
-                        break;
-                    case STRING:
-                        value = cell.getStringCellValue() + "";
-                        break;
-                    case BLANK:
-                        value = cell.getBooleanCellValue() + "";
-                        break;
-                    case ERROR:
-                        value = cell.getErrorCellValue() + "";
-                        break;
+                    case FORMULA -> value = cell.getCellFormula();
+                    case NUMERIC -> value = cell.getNumericCellValue() + "";
+                    case STRING -> value = cell.getStringCellValue() + "";
+                    case BLANK -> value = cell.getBooleanCellValue() + "";
+                    case ERROR -> value = cell.getErrorCellValue() + "";
                 }
                 out.println(columName + "값은 " + value);
             }
         }
     }
     public static void getDataForGivenDays(int day){
+        HashMap<String, Integer> type = new HashMap<String, Integer>();
+        type.put("평균전압/전류",10);
+        type.put("LP데이터",96);
         int cnt = 0;
         XSSFWorkbook workbook = null;
         try {
-            FileInputStream file = new FileInputStream("C:\\Users\\TB-NTB-118\\Desktop\\08250143205_LP정보_220426024503.xlsx");
+            FileInputStream file = new FileInputStream("C:\\Users\\TB-NTB-118\\Desktop\\24260157644_평균전압.전류_220504010650.xlsx");
             workbook = new XSSFWorkbook(file);
         } catch (FileNotFoundException e) {
             fail("Excel file: '" + "C:\\Users\\TB-NTB-118\\Desktop\\24260157644_계기기본정보_220504013139.xlsx" + "' does not exist");
@@ -101,7 +95,7 @@ public class parsing {
                 break;
             }
         }
-        for (int r = cnt; r < cnt+ day * 96 ; r++){
+        for (int r = cnt; r < cnt+ day * type.get("평균전압/전류"); r++){
             XSSFRow row = sheet.getRow(r); // 0 ~ rows
             for (int c = 0 ; c < cells ; c++){
                 XSSFCell cell = row.getCell(c);
