@@ -2,9 +2,12 @@ import java.awt.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.text.SimpleDateFormat;
 
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -100,7 +103,6 @@ public class parsing {
             for (int c = 0 ; c < cells ; c++){
                 XSSFCell cell = row.getCell(c);
                 String value = "";
-
                 if (cell == null) { // r열 c행의 cell이 비어있을 때
                     continue;
                 } else { // 타입별로 내용 읽기
@@ -111,9 +113,14 @@ public class parsing {
                         case BLANK -> value = cell.getBooleanCellValue() + "";
                         case ERROR -> value = cell.getErrorCellValue() + "";
                     }
+                }
+                if (c == 0){
+                    Date date = HSSFDateUtil.getJavaDate(cell.getNumericCellValue());
+                    long time = date.getTime();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    value = sdf.format(time);
 
                 }
-
                 System.out.println(r + "번 행 : " + c + "번 열 값은: " + value);
                 out.println(cell.getCellType());
             }
