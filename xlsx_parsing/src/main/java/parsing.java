@@ -28,7 +28,7 @@ public class parsing {
         this.fileName = fileName;
     }
 
-    public static void getCellDataByColumnName(String columName) {
+    public void getCellDataByColumnName(String columName) {
         XSSFWorkbook workbook = null;
         try {
             FileInputStream file = new FileInputStream("C:\\Users\\TB-NTB-118\\Desktop\\24260157644_계기기본정보_220504013139.xlsx");
@@ -115,6 +115,7 @@ public class parsing {
                 }
 
                 System.out.println(r + "번 행 : " + c + "번 열 값은: " + value);
+                out.println(cell.getCellType());
             }
         }
     }
