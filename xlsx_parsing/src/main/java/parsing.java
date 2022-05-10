@@ -1,10 +1,9 @@
-import java.awt.*;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.text.SimpleDateFormat;
 
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
@@ -13,7 +12,6 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.jetbrains.annotations.NotNull;
 
 import static java.lang.System.out;
 import static org.junit.Assert.*;
@@ -21,28 +19,46 @@ import static org.junit.Assert.*;
 
 public class parsing {
 
-    public static void main(String[] args){
-        getDataForGivenDays(1);
-    }
     private String fileName;
+    private final String ExcelPath = "C:\\Program Files (x86)\\KEPRI\\통합운영프로그램\\Excel\\24260157644";
+
+    private FileInputStream file;
+
+    public parsing() throws IOException{
+        String filepath = setPath();
+        out.println("path : " + filepath);
+
+        this.file = new FileInputStream(filepath);
+    }
+
+    private String setPath() {
+        File directory = new File(ExcelPath);
+        File[] files = directory.listFiles(File::isFile);
+        long lastModifiedTime = Long.MIN_VALUE;
+        File chosenFile = null;
+
+        if (files != null){
+            for (File file: files) {
+                if(file.lastModified() > lastModifiedTime){
+                    chosenFile = file;
+                    lastModifiedTime = file.lastModified();
+                }
+            }
+        }
+        if (chosenFile != null){
+            return chosenFile.getPath();
+        }
+        throw new Error("xlsx file what you were looking for does not exist");
+    }
 
 
     public parsing(String fileName) {
         this.fileName = fileName;
     }
 
-    public void getCellDataByColumnName(String columName) {
+    public void getCellDataByColumnName(String columName) throws IOException {
         XSSFWorkbook workbook = null;
-        try {
-            FileInputStream file = new FileInputStream("C:\\Users\\TB-NTB-118\\Desktop\\24260157644_계기기본정보_220504013139.xlsx");
-            workbook = new XSSFWorkbook(file);
-        } catch (FileNotFoundException e) {
-            fail("Excel file: '" + "C:\\Users\\TB-NTB-118\\Desktop\\24260157644_계기기본정보_220504013139.xlsx" + "' does not exist");
-            System.exit(0);
-        } catch (IOException e) {
-            fail("Excel file: '" + "C:\\Users\\TB-NTB-118\\Desktop\\24260157644_계기기본정보_220504013139.xlsx" + "' exist but something error with IO");
-            System.exit(0);
-        }
+        workbook = new XSSFWorkbook(file);
         String value = "";
         XSSFSheet sheet = workbook.getSheetAt(0);
         int rows = sheet.getPhysicalNumberOfRows(); // 행의 수
@@ -63,25 +79,15 @@ public class parsing {
             }
         }
     }
-    public static void getDataForGivenDays(int day){
+
+    public void getDataForGivenDays(int day) throws IOException {
         HashMap<String, Integer> type = new HashMap<String, Integer>();
         type.put("평균전압/전류",10);
         type.put("LP데이터",96);
         int cnt = 0;
         XSSFWorkbook workbook = null;
-        try {
-            FileInputStream file = new FileInputStream("C:\\Users\\TB-NTB-118\\Desktop\\24260157644_평균전압.전류_220504010650.xlsx");
-            workbook = new XSSFWorkbook(file);
-        } catch (FileNotFoundException e) {
-            fail("Excel file: '" + "C:\\Users\\TB-NTB-118\\Desktop\\24260157644_계기기본정보_220504013139.xlsx" + "' does not exist");
-            System.exit(0);
-        } catch (IOException e) {
-            fail("Excel file: '" + "C:\\Users\\TB-NTB-118\\Desktop\\24260157644_계기기본정보_220504013139.xlsx" + "' exist but something error with IO");
-            System.exit(0);
-        }
-        /**
-         * 비어있지 않은 셀까지만 데이터 확인
-         */
+        workbook = new XSSFWorkbook(file);
+
         int cells = 0;
         XSSFSheet sheet = workbook.getSheetAt(0);
         while (true){
